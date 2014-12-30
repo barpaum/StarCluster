@@ -224,9 +224,15 @@ class Node(object):
     @property
     def num_processors(self):
         if not self._num_procs:
-            self._num_procs = int(
-                self.ssh.execute(
-                    'cat /proc/cpuinfo | grep processor | wc -l')[0])
+            hyperthreading=False
+            if hyperthreading:
+                self._num_procs = int(
+                    self.ssh.execute(
+                        'cat /proc/cpuinfo | grep processor | wc -l')[0])
+            else:
+                self._num_procs = int(
+                    self.ssh.execute(
+                        'grep "^core id" /proc/cpuinfo | sort -u | wc -l')[0])
         return self._num_procs
 
     @property
